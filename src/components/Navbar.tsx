@@ -37,8 +37,8 @@ export const Navbar = () => {
       isScrolled ? "bg-white/95 backdrop-blur-md shadow-lg py-0" : "bg-white/80 backdrop-blur-sm py-0"
     )}>
       <div className="container mx-auto px-4 md:px-6 py-2">
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-2 lg:gap-0">
-          <div className="flex items-center justify-between w-full lg:w-auto">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 lg:gap-6 xl:gap-8">
+          <div className="flex shrink-0 items-center justify-between w-full lg:w-auto lg:pr-2">
             <a href="#" className="flex items-center group">
               <img 
                 src="/logo.png" 
@@ -74,8 +74,8 @@ export const Navbar = () => {
           </div>
           
           {/* Navigation Links - Always Visible & No Wrap */}
-          <div className="flex-1 max-w-full overflow-x-auto no-scrollbar lg:overflow-visible">
-            <div className="flex flex-nowrap items-center justify-center lg:justify-start gap-x-3 md:gap-x-4 lg:gap-x-6 px-4 lg:px-0 min-w-max mx-auto">
+          <div className="flex-1 min-w-0 max-w-full overflow-x-auto no-scrollbar lg:overflow-visible lg:border-l lg:border-slate-200/80 lg:pl-6 xl:pl-8">
+            <div className="flex flex-nowrap items-center justify-center lg:justify-start gap-x-3 md:gap-x-4 lg:gap-x-5 xl:gap-x-6 px-4 lg:px-0 min-w-max mx-auto lg:mx-0">
               {navLinks.map((link) => (
                 <a 
                   key={link.name} 
