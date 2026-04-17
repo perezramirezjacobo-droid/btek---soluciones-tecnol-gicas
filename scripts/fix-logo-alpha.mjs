@@ -1,34 +1,81 @@
 /**
- * El PNG exportado puede traer el patrón de "transparencia" del editor como píxeles opacos.
- * Este script hace flood-fill desde los bordes y pone alpha=0 en esas zonas (grises claros
- * acromáticos), sin tocar el logo (azul, rojo, blanco puro de la estrella).
+ * Convierte en transparencia real:
+ * - Patrón de cuadros grises del editor (como logobtek antes).
+ * - Fondos blancos/casi blancos opacos en los bordes (logos exportados sobre lienzo blanco).
+ *
+ * Omite PNGs que ya tienen bastante transparencia (>2% de píxeles con alpha bajo).
  */
 import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { PNG } from 'pngjs';
 
-const inputPath = new URL('../public/logobtek.png', import.meta.url);
-const backupPath = new URL('../public/logobtek-baked-grid-backup.png', import.meta.url);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const publicDir = path.join(__dirname, '..', 'public');
+
+/** Logos del carrusel (PartnersCarousel) — rutas bajo public/ */
+const CAROUSEL_LOGOS = [
+  'hp.png',
+  'fortinet.png',
+  'huawei.png',
+  'tplink.png',
+  'aruba.png',
+  'dell.png',
+  'microsoft.png',
+  'axis.png',
+  'belden.png',
+  'dintelligence.png',
+  'alhua.png',
+];
+
+const SKIP_IF_TRANSPARENT_RATIO = 0.02;
+const MIN_CLEARED_TO_WRITE = 500;
 
 function isBackgroundPixel(r, g, b) {
   const max = Math.max(r, g, b);
   const min = Math.min(r, g, b);
-  if (max - min > 26) return false;
   const avg = (r + g + b) / 3;
-  // Cuadros del patrón típico ~190–236; excluimos blanco puro de la estrella (~255)
+  // Fondo blanco/casi blanco (exportación opaca sobre lienzo)
+  if (max - min <= 22 && avg >= 247) return true;
+  // Patrón de cuadros gris del editor
+  if (max - min > 26) return false;
   return avg >= 176 && avg <= 246;
 }
 
-function main() {
-  const buf = fs.readFileSync(inputPath);
-  const png = PNG.sync.read(buf);
-  const { width: w, height: h, data } = png;
+/**
+ * @param {string} filename - nombre bajo public/ o ruta absoluta
+ * @param {{ dryRun?: boolean, forceBackup?: boolean }} opts
+ */
+function processPngFile(filename, opts = {}) {
+  const dryRun = opts.dryRun === true;
+  const inputPath = path.isAbsolute(filename)
+    ? filename
+    : path.join(publicDir, filename);
 
-  if (!fs.existsSync(backupPath)) {
-    fs.writeFileSync(backupPath, buf);
-    console.log('Copia de seguridad:', backupPath.pathname);
+  if (!fs.existsSync(inputPath)) {
+    console.warn('No existe:', inputPath);
+    return { ok: false, reason: 'missing' };
   }
 
-  const visited = new Uint8Array(w * h);
+  const buf = fs.readFileSync(inputPath);
+  if (buf.length < 8 || buf[0] !== 0x89) {
+    console.warn('No es PNG:', filename);
+    return { ok: false, reason: 'not-png' };
+  }
+
+  const png = PNG.sync.read(buf);
+  const { width: w, height: h, data } = png;
+  const total = w * h;
+  let transparent = 0;
+  for (let i = 3; i < data.length; i += 4) {
+    if (data[i] < 8) transparent++;
+  }
+  if (transparent / total > SKIP_IF_TRANSPARENT_RATIO) {
+    console.log('[omitido]', filename, `— ya tiene transparencia (${((transparent / total) * 100).toFixed(1)}%)`);
+    return { ok: true, skipped: true, reason: 'already-transparent' };
+  }
+
+  const visited = new Uint8Array(total);
   const q = [];
 
   function idx(x, y) {
@@ -66,17 +113,51 @@ function main() {
   }
 
   let cleared = 0;
-  for (let i = 0; i < w * h; i++) {
+  for (let i = 0; i < total; i++) {
     if (!visited[i]) continue;
     const p = i * 4;
     data[p + 3] = 0;
     cleared++;
   }
 
-  const out = PNG.sync.write(png);
-  fs.writeFileSync(inputPath, out);
-  console.log('Píxeles pasados a transparentes:', cleared, '/', w * h);
-  console.log('Actualizado:', inputPath.pathname);
+  if (cleared < MIN_CLEARED_TO_WRITE) {
+    console.log('[omitido]', filename, `— pocos píxeles de fondo (${cleared}), sin cambios`);
+    return { ok: true, skipped: true, reason: 'too-few-cleared', cleared };
+  }
+
+  if (dryRun) {
+    console.log('[dry-run]', filename, 'se transparentarían', cleared, '/', total, 'píxeles');
+    return { ok: true, dryRun: true, cleared };
+  }
+
+  const backupPath = inputPath.replace(/\.png$/i, '-baked-grid-backup.png');
+  if (opts.forceBackup !== false && !fs.existsSync(backupPath)) {
+    fs.writeFileSync(backupPath, buf);
+    console.log('Copia:', path.basename(backupPath));
+  }
+
+  fs.writeFileSync(inputPath, PNG.sync.write(png));
+  console.log('[ok]', filename, '→ transparentes:', cleared, '/', total);
+  return { ok: true, cleared };
+}
+
+function main() {
+  const args = process.argv.slice(2);
+  const dryRun = args.includes('--dry-run');
+  const rest = args.filter((a) => a !== '--dry-run');
+
+  let files;
+  if (rest.includes('--carousel')) {
+    files = [...CAROUSEL_LOGOS];
+  } else if (rest.length) {
+    files = rest;
+  } else {
+    files = ['logobtek.png'];
+  }
+
+  for (const f of files) {
+    processPngFile(f, { dryRun });
+  }
 }
 
 main();

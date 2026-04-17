@@ -2,6 +2,14 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { CiscoModal } from './CiscoModal';
 
+/** Invalidación de caché para PNG locales del carrusel tras reprocesar transparencia */
+const carouselAssetVersion = '2';
+
+function carouselLogoSrc(logo: string) {
+  if (logo.startsWith('http://') || logo.startsWith('https://')) return logo;
+  return `${logo}?v=${carouselAssetVersion}`;
+}
+
 const alliances = [
   { name: "Cisco", logo: "https://cdn.worldvectorlogo.com/logos/cisco-2.svg", isSpecial: true },
   { name: "HP", logo: "/hp.png" },
@@ -48,7 +56,7 @@ export const PartnersCarousel = () => {
                 onClick={() => a.isSpecial && setIsCiscoModalOpen(true)}
               >
                 <img
-                  src={a.logo}
+                  src={carouselLogoSrc(a.logo)}
                   alt={a.name}
                   className={`max-w-full max-h-full object-contain transition-transform duration-300 ${a.isSpecial ? 'cursor-pointer scale-105 hover:scale-110' : 'cursor-default hover:scale-105'}`}
                   referrerPolicy="no-referrer"
