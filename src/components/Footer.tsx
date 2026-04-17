@@ -12,7 +12,7 @@ export const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center gap-8 border-b border-white/10 pb-12 mb-8">
           <div className="flex items-center gap-2">
-            <BtekLogo variant="light" className="h-14 sm:h-16 md:h-[4.5rem] w-auto" />
+            <BtekLogo variant="light" className="h-[4.5rem] sm:h-20 md:h-24 w-auto" />
           </div>
           <div className="flex flex-wrap justify-center gap-8 text-sm font-bold uppercase tracking-widest">
             <Link to="/" className="hover:text-btek-red transition-colors">{t('nav.inicio')}</Link>

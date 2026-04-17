@@ -42,7 +42,7 @@ export const Navbar = () => {
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 lg:gap-6 xl:gap-8">
           <div className="flex shrink-0 items-center justify-between w-full lg:w-auto lg:pr-2">
             <Link to="/" className="flex items-center gap-2 group py-0.5 rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-btek-blue">
-              <BtekLogo className="h-8 sm:h-9 md:h-10 w-auto transition-transform duration-300 ease-out group-hover:scale-[1.02]" />
+              <BtekLogo className="h-11 sm:h-12 md:h-14 w-auto transition-transform duration-300 ease-out group-hover:scale-[1.02]" />
               <span className="sr-only">BTEK — {t('nav.inicio')}</span>
             </Link>
 

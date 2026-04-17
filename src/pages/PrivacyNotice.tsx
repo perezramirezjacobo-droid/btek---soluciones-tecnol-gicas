@@ -21,7 +21,7 @@ export const PrivacyNotice = () => {
       <header className="border-b border-slate-200 bg-white">
         <div className="container mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-4">
           <Link to="/" className="flex items-center gap-2 rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-btek-blue">
-            <BtekLogo className="h-9 sm:h-10 w-auto" />
+            <BtekLogo className="h-11 sm:h-12 w-auto" />
             <span className="sr-only">Btek — {t('privacy.back_home')}</span>
           </Link>
           <Link

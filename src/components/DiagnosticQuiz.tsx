@@ -269,7 +269,7 @@ Saludos.
           
           <div className="relative z-10">
             <div className="mb-8">
-              <BtekLogo variant="light" className="h-11 w-auto" />
+              <BtekLogo variant="light" className="h-12 w-auto" />
             </div>
             <h2 className="text-3xl font-black uppercase tracking-tighter leading-none mb-4">
               Diagnóstico <br /> <span className="text-btek-red">Pak Retail</span>
@@ -298,7 +298,7 @@ Saludos.
         {/* Main Content */}
         <div className="flex-1 p-6 md:p-12 overflow-y-auto custom-scrollbar relative">
           <div className="md:hidden mb-8">
-            <BtekLogo className="h-10 w-auto" />
+            <BtekLogo className="h-12 w-auto" />
           </div>
           <button 
             onClick={onClose}
