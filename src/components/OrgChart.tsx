@@ -20,32 +20,11 @@ export const OrgChart = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
-          className="max-w-xl mx-auto rounded-2xl border border-slate-200 bg-white px-5 py-6 sm:px-8 sm:py-7 shadow-sm text-slate-800"
+          className="max-w-3xl mx-auto rounded-2xl border border-slate-200 bg-white px-5 py-6 sm:px-8 sm:py-8 shadow-sm"
         >
-          <div className="font-black text-btek-blue text-center text-sm sm:text-base uppercase tracking-wide border-b border-slate-100 pb-3 mb-3">
-            {t('org.dg')}
-          </div>
-          <ul className="space-y-3 text-sm sm:text-[15px] leading-snug">
-            <li className="flex gap-2">
-              <span className="text-btek-red font-black shrink-0">—</span>
-              <span className="font-semibold">{t('org.admin')}</span>
-            </li>
-            <li>
-              <div className="flex gap-2">
-                <span className="text-btek-red font-black shrink-0">—</span>
-                <span className="font-semibold">{t('org.ing')}</span>
-              </div>
-              <ul className="mt-2 ml-2 sm:ml-4 pl-3 sm:pl-4 border-l-2 border-btek-blue/25 space-y-2">
-                <li>
-                  <span className="font-medium text-slate-700">{t('org.ops')}</span>
-                  <div className="mt-1.5 ml-3 sm:ml-4 pl-3 border-l border-slate-300 text-slate-600">
-                    {t('org.noc')}
-                  </div>
-                </li>
-                <li className="font-medium text-slate-700 pt-0.5">{t('org.sp')}</li>
-              </ul>
-            </li>
-          </ul>
+          <p className="text-slate-700 text-sm sm:text-base leading-relaxed text-left">
+            {t('org.body')}
+          </p>
         </motion.div>
       </div>
     </section>
