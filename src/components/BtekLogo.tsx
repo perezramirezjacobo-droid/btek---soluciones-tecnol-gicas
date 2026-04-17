@@ -3,29 +3,36 @@ import { cn } from '../lib/utils';
 
 type BtekLogoProps = {
   className?: string;
-  /** Reservado por si en el futuro se usa variante para fondos oscuros (misma imagen PNG con transparencia). */
+  /** En fondos oscuros (footer, sidebar): refuerza visibilidad del PNG con transparencia sin añadir fondo opaco. */
   variant?: 'default' | 'light';
 };
 
 /**
- * Logo Btek desde PNG con canal alfa; sin fondo adicional en el contenedor.
+ * Logo Btek (PNG con canal alfa). El tamaño lo controla `className` en el contenedor (p. ej. h-10).
  */
 export const BtekLogo = ({ className, variant = 'default' }: BtekLogoProps) => {
-  void variant;
   return (
-    <img
-      src="/logobtek.png"
-      alt="Btek"
-      width={320}
-      height={96}
-      draggable={false}
-      decoding="async"
+    <span
       className={cn(
-        'block h-auto w-auto max-w-full shrink-0 object-contain bg-transparent',
-        'select-none',
+        'inline-flex max-w-full shrink-0 items-center justify-start bg-transparent leading-none',
         className
       )}
-      style={{ backgroundColor: 'transparent' }}
-    />
+    >
+      <img
+        src="/logobtek.png"
+        alt="Btek"
+        draggable={false}
+        decoding="async"
+        loading="eager"
+        fetchPriority="high"
+        className={cn(
+          'block h-full w-auto max-h-full object-contain object-left [background:none]',
+          // Fondo oscuro: leve realce para que el arte con alfa se lea bien (sin capa de color detrás)
+          variant === 'light' &&
+            'brightness-[1.12] contrast-[1.05] drop-shadow-[0_0_2px_rgba(255,255,255,0.4)]'
+        )}
+        style={{ backgroundColor: 'transparent', mixBlendMode: 'normal' }}
+      />
+    </span>
   );
 };
