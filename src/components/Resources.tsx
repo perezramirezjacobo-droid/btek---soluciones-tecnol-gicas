@@ -16,8 +16,10 @@ export const Resources = () => {
     { name: "Aruba", logo: "/aruba.png" },
     { name: "Dell", logo: "/dell.png" },
     { name: "Microsoft", logo: "/microsoft.png" },
-    { name: "AWS", logo: "/aws.png" },
-    { name: "Google Cloud", logo: "/googlecloud.png" }
+    { name: "Axis", logo: "/axis.png" },
+    { name: "Belden", logo: "/belden.png" },
+    { name: "Dintelligence", logo: "/dintelligence.png" },
+    { name: "Alhua", logo: "/alhua.png" },
   ];
 
   return (
@@ -41,7 +43,7 @@ export const Resources = () => {
               <img 
                 src={tech.logo} 
                 alt={tech.name} 
-                className={`max-w-full max-h-full object-contain transition-all duration-300 ${tech.isSpecial ? '' : 'grayscale group-hover:grayscale-0'}`}
+                className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105"
                 referrerPolicy="no-referrer"
               />
             </motion.div>

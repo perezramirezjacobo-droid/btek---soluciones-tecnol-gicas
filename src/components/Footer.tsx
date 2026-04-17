@@ -1,6 +1,7 @@
 import React from 'react';
 import { Facebook, Instagram, Linkedin, Youtube } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { BtekLogo } from './BtekLogo';
 
 export const Footer = () => {
   const { t } = useLanguage();
@@ -10,12 +11,7 @@ export const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center gap-8 border-b border-white/10 pb-12 mb-8">
           <div className="flex items-center gap-2">
-            <img 
-              src="/logo.png" 
-              alt="Btek Logo" 
-              className="h-20 w-auto"
-              referrerPolicy="no-referrer"
-            />
+            <BtekLogo variant="light" className="h-14 sm:h-16 md:h-[4.5rem] w-auto" />
           </div>
           <div className="flex flex-wrap justify-center gap-8 text-sm font-bold uppercase tracking-widest">
             <a href="#" className="hover:text-btek-red transition-colors">{t('nav.inicio')}</a>

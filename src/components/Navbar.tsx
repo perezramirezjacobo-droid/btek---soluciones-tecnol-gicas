@@ -4,6 +4,7 @@ import { Facebook, Instagram, Linkedin, Youtube, Globe } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useLanguage } from '../context/LanguageContext';
 import { PartnersCarousel } from './PartnersCarousel';
+import { BtekLogo } from './BtekLogo';
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -39,13 +40,9 @@ export const Navbar = () => {
       <div className="container mx-auto px-4 md:px-6 py-2">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 lg:gap-6 xl:gap-8">
           <div className="flex shrink-0 items-center justify-between w-full lg:w-auto lg:pr-2">
-            <a href="#" className="flex items-center group">
-              <img 
-                src="/logo.png" 
-                alt="Btek Logo" 
-                className="h-10 md:h-14 w-auto transition-transform duration-300 group-hover:scale-105 drop-shadow-md"
-                referrerPolicy="no-referrer"
-              />
+            <a href="#" className="flex items-center gap-2 group py-0.5 rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-btek-blue">
+              <BtekLogo className="h-8 sm:h-9 md:h-10 w-auto transition-transform duration-300 ease-out group-hover:scale-[1.02]" />
+              <span className="sr-only">BTEK — {t('nav.inicio')}</span>
             </a>
 
             {/* Language Switcher for mobile */}

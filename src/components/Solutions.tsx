@@ -74,6 +74,11 @@ export const Solutions = () => {
                 <p className="text-4xl font-bold text-btek-red mb-2">&lt;4h</p>
                 <p className="text-xs font-bold uppercase tracking-widest text-slate-400">{t('solutions.stat.response')}</p>
               </div>
+              <div className="bg-white/5 p-6 rounded-2xl text-center flex flex-col items-center justify-center min-h-[120px]">
+                <p className="text-lg sm:text-xl font-bold text-btek-red leading-snug">
+                  {t('solutions.stat.presence')}
+                </p>
+              </div>
             </div>
           </div>
         </div>

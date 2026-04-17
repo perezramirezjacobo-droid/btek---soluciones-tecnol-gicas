@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import confetti from 'canvas-confetti';
+import { BtekLogo } from './BtekLogo';
 
 interface DiagnosticQuizProps {
   isOpen: boolean;
@@ -267,7 +268,9 @@ Saludos.
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32 blur-3xl" />
           
           <div className="relative z-10">
-            <img src="/logo.png" alt="Btek" className="h-12 w-auto mb-8 object-contain" />
+            <div className="mb-8">
+              <BtekLogo variant="light" className="h-11 w-auto" />
+            </div>
             <h2 className="text-3xl font-black uppercase tracking-tighter leading-none mb-4">
               Diagnóstico <br /> <span className="text-btek-red">Pak Retail</span>
             </h2>
@@ -295,7 +298,7 @@ Saludos.
         {/* Main Content */}
         <div className="flex-1 p-6 md:p-12 overflow-y-auto custom-scrollbar relative">
           <div className="md:hidden mb-8">
-            <img src="/logo.png" alt="Btek" className="h-10 w-auto object-contain" />
+            <BtekLogo className="h-10 w-auto" />
           </div>
           <button 
             onClick={onClose}

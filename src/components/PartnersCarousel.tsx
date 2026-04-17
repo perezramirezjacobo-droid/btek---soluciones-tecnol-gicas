@@ -11,8 +11,10 @@ const alliances = [
   { name: "Aruba", logo: "/aruba.png" },
   { name: "Dell", logo: "/dell.png" },
   { name: "Microsoft", logo: "/microsoft.png" },
-  { name: "AWS", logo: "/aws.png" },
-  { name: "Google Cloud", logo: "/googlecloud.png" }
+  { name: "Axis", logo: "/axis.png" },
+  { name: "Belden", logo: "/belden.png" },
+  { name: "Dintelligence", logo: "/dintelligence.png" },
+  { name: "Alhua", logo: "/alhua.png" },
 ];
 
 // Duplicate for infinite scroll
@@ -48,7 +50,7 @@ export const PartnersCarousel = () => {
                 <img
                   src={a.logo}
                   alt={a.name}
-                  className={`max-w-full max-h-full object-contain transition-all cursor-pointer ${a.isSpecial ? 'opacity-100 scale-110' : 'opacity-50 grayscale hover:grayscale-0 hover:opacity-100'}`}
+                  className={`max-w-full max-h-full object-contain transition-transform duration-300 ${a.isSpecial ? 'cursor-pointer scale-105 hover:scale-110' : 'cursor-default hover:scale-105'}`}
                   referrerPolicy="no-referrer"
                 />
               </div>
