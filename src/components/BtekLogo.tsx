@@ -19,7 +19,7 @@ export const BtekLogo = ({ className, variant }: BtekLogoProps) => {
       )}
     >
       <img
-        src="/logobtek.png?v=2"
+        src="/logobtek.png?v=3"
         alt="Btek — Expertos en redes complejas"
         draggable={false}
         decoding="async"

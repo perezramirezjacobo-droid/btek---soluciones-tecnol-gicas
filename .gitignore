@@ -6,3 +6,6 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Respaldo local al regenerar transparencia del logo (scripts/fix-logo-alpha.mjs)
+public/logobtek-baked-grid-backup.png
