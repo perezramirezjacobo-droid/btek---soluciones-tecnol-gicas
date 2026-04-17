@@ -5,7 +5,6 @@ import {
   Award,
   CheckCircle2,
   Network,
-  ArrowRight,
 } from 'lucide-react';
 const cases = [
   {
@@ -206,16 +205,11 @@ export const SuccessStories = () => {
                   ))}
                 </div>
 
-                <div className="mt-auto pt-6 border-t border-slate-100 flex items-center justify-between">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <div className="p-2 bg-slate-50 rounded-lg shrink-0">
-                      <Network size={16} className="text-btek-blue" />
-                    </div>
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 truncate">{c.tech}</span>
+                <div className="mt-auto pt-6 border-t border-slate-100 flex items-center gap-2 min-w-0">
+                  <div className="p-2 bg-slate-50 rounded-lg shrink-0">
+                    <Network size={16} className="text-btek-blue" />
                   </div>
-                  <button type="button" className="p-2 bg-btek-blue text-white rounded-xl hover:bg-btek-red transition-colors shrink-0">
-                    <ArrowRight size={16} />
-                  </button>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 truncate">{c.tech}</span>
                 </div>
               </div>
             </motion.div>
