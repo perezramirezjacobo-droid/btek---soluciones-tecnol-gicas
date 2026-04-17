@@ -8,9 +8,9 @@ export const Hero = ({ onOpenQuiz }: { onOpenQuiz: () => void }) => {
   const features = [
     "Monitoreo NOC con SLA 24x7x4x365",
     "Análisis de datos y soluciones cloud con IA",
-    "Redes escalables, WiFi última generación, SD-WAN",
+    "Redes escalables, WiFi de última generación, SD-WAN",
     "Videovigilancia inteligente con IA",
-    "Ciberseguridad contra amenazas criticas",
+    "Ciberseguridad contra amenazas críticas",
     "Telefonía IP y colaboración segura",
     "Soporte técnico nacional con ingenieros certificados."
   ];

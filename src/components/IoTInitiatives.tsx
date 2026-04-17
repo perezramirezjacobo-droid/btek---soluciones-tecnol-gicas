@@ -151,10 +151,10 @@ export const IoTInitiatives = () => {
 
             <div className="grid md:grid-cols-2 gap-x-8 gap-y-3">
               {[
-                "Atención de tickets", "Soporte correctivo (RMA´s)", 
+                "Atención de tickets", "Soporte correctivo (RMA)",
                 "Soporte preventivo anual", "Control de cambios",
-                "Administración de configuración", "Gestión ante Carrier",
-                "Escalación automática", "Cumplimiento SLA´s 24x7",
+                "Administración de configuración", "Gestión ante el carrier",
+                "Escalación automática", "Cumplimiento de SLAs 24x7",
                 "Servicios ABC", "Soporte telefónico ilimitado",
                 "Soporte en sitio", "Respaldo de configuraciones"
               ].map((service, i) => (
@@ -199,7 +199,7 @@ export const IoTInitiatives = () => {
                   <MapPin className="text-btek-red" size={24} />
                   <p className="font-black uppercase tracking-tighter">Geolocalización</p>
                 </div>
-                <p className="text-xs font-bold text-slate-600">Localización de activos en tiempo real mediante red inalámbrica.</p>
+                <p className="text-xs font-bold text-slate-600">Localización de activos en tiempo real mediante WiFi de última generación.</p>
               </div>
             </div>
 
@@ -212,7 +212,7 @@ export const IoTInitiatives = () => {
               <div>
                 <h3 className="text-btek-red font-black uppercase tracking-widest text-sm mb-2">Iniciativas IoT con IA</h3>
                 <h2 className="text-5xl font-black uppercase tracking-tighter">Moon <span className="text-btek-red">Palace</span></h2>
-                <p className="text-xl font-bold mt-2 text-slate-300">Admón. y Monitoreo de Telefonía Wireless con Seguridad</p>
+                <p className="text-xl font-bold mt-2 text-slate-300">Admón. y monitoreo de telefonía y WiFi de última generación con seguridad</p>
               </div>
 
               <div className="bg-white/10 backdrop-blur-md p-8 rounded-3xl border border-white/10">

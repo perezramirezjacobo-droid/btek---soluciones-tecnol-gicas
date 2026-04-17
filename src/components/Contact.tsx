@@ -1,9 +1,12 @@
 import React, { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Phone, Mail, Send } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { cn } from '../lib/utils';
 
 export const Contact = () => {
   const { t } = useLanguage();
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     position: '',
@@ -32,7 +35,8 @@ export const Contact = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+    if (!privacyAccepted) return;
+
     const subject = encodeURIComponent(`Nuevo mensaje de contacto: ${formData.name} - ${formData.company}`);
     const body = encodeURIComponent(`
 Nombre: ${formData.name}
@@ -178,8 +182,39 @@ ${formData.message}
                   className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-btek-blue" 
                 />
               </div>
+              <div className="md:col-span-2 flex items-start gap-3">
+                <input
+                  id="contact-privacy"
+                  type="checkbox"
+                  checked={privacyAccepted}
+                  onChange={(e) => setPrivacyAccepted(e.target.checked)}
+                  className="mt-1 h-4 w-4 shrink-0 rounded border-slate-300 text-btek-red focus:ring-btek-blue focus:ring-offset-0"
+                  aria-required="true"
+                />
+                <label htmlFor="contact-privacy" className="text-sm text-slate-600 leading-snug cursor-pointer select-none">
+                  {t('contact.form.privacy_prefix')}{' '}
+                  <Link
+                    to="/aviso-de-privacidad"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-btek-blue font-semibold underline underline-offset-2 hover:text-btek-red"
+                  >
+                    {t('footer.privacy_link')}
+                  </Link>
+                  .
+                </label>
+              </div>
               <div className="md:col-span-2">
-                <button type="submit" className="w-full bg-btek-red text-white py-4 rounded-xl font-bold hover:bg-red-700 transition-colors shadow-lg uppercase tracking-widest flex items-center justify-center gap-2">
+                <button
+                  type="submit"
+                  disabled={!privacyAccepted}
+                  className={cn(
+                    'w-full py-4 rounded-xl font-bold transition-colors shadow-lg uppercase tracking-widest flex items-center justify-center gap-2',
+                    privacyAccepted
+                      ? 'bg-btek-red text-white hover:bg-red-700 cursor-pointer'
+                      : 'bg-slate-200 text-slate-500 cursor-not-allowed'
+                  )}
+                >
                   <Send size={18} />
                   {t('contact.form.send')}
                 </button>

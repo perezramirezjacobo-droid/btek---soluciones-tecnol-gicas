@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Linkedin, Youtube } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { BtekLogo } from './BtekLogo';
@@ -14,7 +15,7 @@ export const Footer = () => {
             <BtekLogo variant="light" className="h-14 sm:h-16 md:h-[4.5rem] w-auto" />
           </div>
           <div className="flex flex-wrap justify-center gap-8 text-sm font-bold uppercase tracking-widest">
-            <a href="#" className="hover:text-btek-red transition-colors">{t('nav.inicio')}</a>
+            <Link to="/" className="hover:text-btek-red transition-colors">{t('nav.inicio')}</Link>
             <a href="#nosotros" className="hover:text-btek-red transition-colors">{t('nav.nosotros')}</a>
             <a href="#productos" className="hover:text-btek-red transition-colors">{t('nav.productos')}</a>
             <a href="#soluciones" className="hover:text-btek-red transition-colors">{t('nav.soluciones')}</a>
@@ -36,7 +37,13 @@ export const Footer = () => {
           </div>
         </div>
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
-          <p>{t('footer.rights')}</p>
+          <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center md:text-left">
+            <Link to="/aviso-de-privacidad" className="text-slate-400 hover:text-btek-red transition-colors underline-offset-2 hover:underline">
+              {t('footer.privacy_link')}
+            </Link>
+            <span className="text-slate-600" aria-hidden>|</span>
+            <span>{t('footer.copyright')}</span>
+          </p>
           <div className="flex gap-4">
             <span>55345618</span>
             <span>ventas@btek.com.mx</span>

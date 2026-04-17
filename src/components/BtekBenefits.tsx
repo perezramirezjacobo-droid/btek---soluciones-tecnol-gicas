@@ -7,7 +7,7 @@ export const BtekBenefits = () => {
     "Atención personalizada",
     "Experiencia",
     "Integración de soluciones",
-    "Socio de Ecosystem Partners",
+    "Socio del programa Ecosystem Partners",
     "Centro de soporte a clientes",
     "Portal de gestión de incidentes"
   ];

@@ -37,7 +37,7 @@ export const IoTSection = () => {
   ];
 
   const hexagons = [
-    { icon: <Wifi size={20} />, label: 'Wi‑Fi' },
+    { icon: <Wifi size={20} />, label: 'WiFi de última gen.' },
     { icon: <Factory size={20} />, label: 'Industria' },
     { icon: <Brain size={20} />, label: 'IA' },
     { icon: <Cloud size={20} />, label: 'Cloud' },
