@@ -18,7 +18,7 @@ export const Resources = () => {
     { name: "Microsoft", logo: "/microsoft.png" },
     { name: "Axis", logo: "/axis.png" },
     { name: "Belden", logo: "/belden.png" },
-    { name: "Dintelligence", logo: "/dintelligence.png" },
+    { name: "Dintelligence", logo: "/dintelligence.png", largerLogo: true },
     { name: "Alhua", logo: "/alhua.png" },
   ];
 
@@ -38,12 +38,12 @@ export const Resources = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
               onClick={() => tech.isSpecial && setIsCiscoModalOpen(true)}
-              className={`w-40 h-24 flex items-center justify-center bg-slate-50 rounded-xl border border-slate-100 p-6 hover:shadow-md transition-all group ${tech.isSpecial ? 'cursor-pointer hover:border-btek-red ring-2 ring-transparent hover:ring-btek-red/20' : 'hover:border-btek-blue'}`}
+              className={`flex items-center justify-center bg-slate-50 rounded-xl border border-slate-100 hover:shadow-md transition-all group ${tech.largerLogo ? 'w-48 h-32 p-5 md:w-52 md:h-36' : 'w-40 h-24 p-6'} ${tech.isSpecial ? 'cursor-pointer hover:border-btek-red ring-2 ring-transparent hover:ring-btek-red/20' : 'hover:border-btek-blue'}`}
             >
               <img 
                 src={tech.logo} 
                 alt={tech.name} 
-                className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105"
+                className={`max-w-full max-h-full object-contain transition-transform duration-300 ${tech.largerLogo ? 'scale-110 md:scale-125 group-hover:scale-[1.15]' : 'group-hover:scale-105'}`}
                 referrerPolicy="no-referrer"
               />
             </motion.div>

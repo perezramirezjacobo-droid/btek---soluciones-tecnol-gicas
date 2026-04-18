@@ -21,7 +21,7 @@ const alliances = [
   { name: "Microsoft", logo: "/microsoft.png" },
   { name: "Axis", logo: "/axis.png" },
   { name: "Belden", logo: "/belden.png" },
-  { name: "Dintelligence", logo: "/dintelligence.png" },
+  { name: "Dintelligence", logo: "/dintelligence.png", largerLogo: true },
   { name: "Alhua", logo: "/alhua.png" },
 ];
 
@@ -52,13 +52,19 @@ export const PartnersCarousel = () => {
             {duplicatedAlliances.map((a, i) => (
               <div 
                 key={i} 
-                className="w-24 h-12 flex items-center justify-center"
+                className={`flex items-center justify-center ${'largerLogo' in a && a.largerLogo ? 'w-36 h-20 md:w-44 md:h-24' : 'w-24 h-12'}`}
                 onClick={() => a.isSpecial && setIsCiscoModalOpen(true)}
               >
                 <img
                   src={carouselLogoSrc(a.logo)}
                   alt={a.name}
-                  className={`max-w-full max-h-full object-contain transition-transform duration-300 ${a.isSpecial ? 'cursor-pointer scale-105 hover:scale-110' : 'cursor-default hover:scale-105'}`}
+                  className={`max-w-full max-h-full object-contain transition-transform duration-300 ${
+                    'largerLogo' in a && a.largerLogo
+                      ? 'scale-110 md:scale-125 cursor-default hover:scale-[1.32]'
+                      : a.isSpecial
+                        ? 'cursor-pointer scale-105 hover:scale-110'
+                        : 'cursor-default hover:scale-105'
+                  }`}
                   referrerPolicy="no-referrer"
                 />
               </div>
