@@ -16,6 +16,7 @@ import { SuccessStories } from '../components/SuccessStories';
 import { FAQ } from '../components/FAQ';
 import { Contact } from '../components/Contact';
 import { Resources } from '../components/Resources';
+import { TechnologyPartners } from '../components/TechnologyPartners';
 import { Footer } from '../components/Footer';
 
 const DiagnosticQuiz = lazy(() =>
@@ -76,6 +77,7 @@ export const HomePage = () => {
         <NOCServices />
         <SuccessStories />
         <FAQ />
+        <TechnologyPartners />
         <Contact />
         <Resources />
       </main>

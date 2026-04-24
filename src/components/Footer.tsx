@@ -19,6 +19,8 @@ export const Footer = () => {
             <a href="#nosotros" className="hover:text-btek-red transition-colors">{t('nav.nosotros')}</a>
             <a href="#productos" className="hover:text-btek-red transition-colors">{t('nav.productos')}</a>
             <a href="#soluciones" className="hover:text-btek-red transition-colors">{t('nav.soluciones')}</a>
+            <a href="#tecnologias" className="hover:text-btek-red transition-colors">{t('nav.tecnologias')}</a>
+            <a href="#recursos" className="hover:text-btek-red transition-colors">{t('nav.recursos')}</a>
             <a href="#contacto" className="hover:text-btek-red transition-colors">{t('nav.contacto')}</a>
           </div>
           <div className="flex gap-4">

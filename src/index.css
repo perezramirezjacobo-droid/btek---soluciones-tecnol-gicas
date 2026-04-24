@@ -16,7 +16,29 @@
   }
 }
 
+@keyframes resource-vault-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-6px);
+  }
+  40% {
+    transform: translateX(6px);
+  }
+  60% {
+    transform: translateX(-4px);
+  }
+  80% {
+    transform: translateX(4px);
+  }
+}
+
 @layer utilities {
+  .animate-resource-vault-shake {
+    animation: resource-vault-shake 0.45s ease-in-out;
+  }
   .glass-card {
     @apply bg-white/10 backdrop-blur-md border border-white/20;
   }
