@@ -1,6 +1,6 @@
 /**
- * Biblioteca de PDFs — rutas servidas desde `public/recursos/<carpeta>/`.
- * Los nombres de archivo con espacios o acentos se codifican en la URL.
+ * Biblioteca de PDFs — archivos en `public/recursos/<carpeta>/`
+ * (nombres ASCII: sin espacios ni acentos).
  */
 export type ResourcePdfEntry = {
   labelEs: string;
@@ -15,10 +15,6 @@ export type ResourceCategoryConfig = {
   files: ResourcePdfEntry[];
 };
 
-/** Ruta pública segura para un PDF bajo `public/recursos/`. */
-const pdfHref = (folder: string, filename: string) =>
-  `/recursos/${folder}/${encodeURIComponent(filename)}`;
-
 export const RESOURCE_LIBRARY: ResourceCategoryConfig[] = [
   {
     id: 'curriculum',
@@ -28,15 +24,12 @@ export const RESOURCE_LIBRARY: ResourceCategoryConfig[] = [
       {
         labelEs: 'Curriculum empresarial BTEK',
         labelEn: 'BTEK corporate curriculum',
-        href: pdfHref('curriculum', 'Curriculum Empresarial Btek.pdf'),
+        href: '/recursos/curriculum/curriculum-empresarial-btek.pdf',
       },
       {
         labelEs: 'Curriculum empresarial BTEK (ES, sin Huawei) — 28 ene.',
         labelEn: 'BTEK corporate curriculum (ES, no Huawei) — Jan 28',
-        href: pdfHref(
-          'curriculum',
-          'Curriculum Empresarial Btek (es) sin Hauwei - 28 Enero.pdf',
-        ),
+        href: '/recursos/curriculum/curriculum-empresarial-btek-es-sin-huawei-28-enero.pdf',
       },
     ],
   },
@@ -48,15 +41,12 @@ export const RESOURCE_LIBRARY: ResourceCategoryConfig[] = [
       {
         labelEs: 'One page BTEK',
         labelEn: 'BTEK one pager',
-        href: pdfHref('presentacion', 'One Page Btek VF.pdf'),
+        href: '/recursos/presentacion/presentacion-one-page-btek.pdf',
       },
       {
         labelEs: 'Presentación BTEK ESP (con Huawei)',
         labelEn: 'BTEK presentation ES (with Huawei)',
-        href: pdfHref(
-          'presentacion',
-          'PRESENTACIÓN BTEK ESP - con Huawei.pptx_compressed.pdf',
-        ),
+        href: '/recursos/presentacion/presentacion-btek-esp-huawei-compressed.pdf',
       },
     ],
   },
@@ -68,12 +58,12 @@ export const RESOURCE_LIBRARY: ResourceCategoryConfig[] = [
       {
         labelEs: 'One page EduTek',
         labelEn: 'EduTek one pager',
-        href: pdfHref('edutek', 'One Page EDUTEK.pdf'),
+        href: '/recursos/edutek/edutek-one-page.pdf',
       },
       {
         labelEs: 'Presentación EduTek',
         labelEn: 'EduTek presentation',
-        href: pdfHref('edutek', 'Presentación EduTek.pdf'),
+        href: '/recursos/edutek/edutek-presentacion.pdf',
       },
     ],
   },
@@ -85,12 +75,12 @@ export const RESOURCE_LIBRARY: ResourceCategoryConfig[] = [
       {
         labelEs: 'One page Fit360',
         labelEn: 'Fit360 one pager',
-        href: pdfHref('fit360', 'One Page Btek Fit360.pdf'),
+        href: '/recursos/fit360/fit360-one-page.pdf',
       },
       {
         labelEs: 'Presentación Fit360',
         labelEn: 'Fit360 presentation',
-        href: pdfHref('fit360', 'Presentación Btek FIT360.pdf'),
+        href: '/recursos/fit360/fit360-presentacion.pdf',
       },
     ],
   },
@@ -102,12 +92,12 @@ export const RESOURCE_LIBRARY: ResourceCategoryConfig[] = [
       {
         labelEs: 'Presentación Hotel Connect',
         labelEn: 'Hotel Connect presentation',
-        href: pdfHref('hoteleria', 'Presentación Btek Hotel Connect.pdf'),
+        href: '/recursos/hoteleria/hoteleria-hotel-connect-presentacion.pdf',
       },
       {
         labelEs: 'One page HotelConnect',
         labelEn: 'HotelConnect one pager',
-        href: pdfHref('hoteleria', 'One Page Btek HotelConnect.pdf'),
+        href: '/recursos/hoteleria/hoteleria-hotelconnect-one-page.pdf',
       },
     ],
   },
@@ -119,27 +109,27 @@ export const RESOURCE_LIBRARY: ResourceCategoryConfig[] = [
       {
         labelEs: 'Presentación Pak Retail',
         labelEn: 'Pak Retail presentation',
-        href: pdfHref('retail', 'Presentación Btek Pak Retail.pdf'),
+        href: '/recursos/retail/retail-pak-retail-presentacion.pdf',
       },
       {
         labelEs: 'One page Pak Retail — general',
         labelEn: 'Pak Retail one pager — general',
-        href: pdfHref('retail', 'One Page Btek Pak Retail General.pdf'),
+        href: '/recursos/retail/retail-pak-retail-general-one-page.pdf',
       },
       {
         labelEs: 'One page Pak Retail — Holowits',
         labelEn: 'Pak Retail one pager — Holowits',
-        href: pdfHref('retail', 'One Page Pak Retail Holowits.pdf'),
+        href: '/recursos/retail/retail-pak-retail-holowits-one-page.pdf',
       },
       {
         labelEs: 'One page Pak Retail — Data Intelligence',
         labelEn: 'Pak Retail one pager — Data Intelligence',
-        href: pdfHref('retail', 'One Page Btek Pak Retail - Data Intelligence.pdf'),
+        href: '/recursos/retail/retail-pak-retail-data-intelligence-one-page.pdf',
       },
       {
         labelEs: 'One page Pak Retail — Huawei',
         labelEn: 'Pak Retail one pager — Huawei',
-        href: pdfHref('retail', 'One Page Btek Pak Retail - Huawei.pdf'),
+        href: '/recursos/retail/retail-pak-retail-huawei-one-page.pdf',
       },
     ],
   },
@@ -151,12 +141,12 @@ export const RESOURCE_LIBRARY: ResourceCategoryConfig[] = [
       {
         labelEs: 'Presentación HospiTek 360',
         labelEn: 'HospiTek 360 presentation',
-        href: pdfHref('salud', 'Presentación HospiTek 360.pdf'),
+        href: '/recursos/salud/salud-hospitek-360-presentacion.pdf',
       },
       {
         labelEs: 'One page HospiTek 360',
         labelEn: 'HospiTek 360 one pager',
-        href: pdfHref('salud', 'One Page HospiTek 360.pdf'),
+        href: '/recursos/salud/salud-hospitek-360-one-page.pdf',
       },
     ],
   },
