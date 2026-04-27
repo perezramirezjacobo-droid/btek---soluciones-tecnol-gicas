@@ -72,9 +72,9 @@ export const Navbar = () => {
             </div>
           </div>
           
-          {/* Navigation Links - Always Visible & No Wrap */}
-          <div className="flex-1 min-w-0 max-w-full overflow-x-auto no-scrollbar lg:overflow-visible lg:border-l lg:border-slate-200/80 lg:pl-6 xl:pl-8">
-            <div className="flex flex-nowrap items-center justify-center lg:justify-start gap-x-3 md:gap-x-4 lg:gap-x-5 xl:gap-x-6 px-4 lg:px-0 min-w-max mx-auto lg:mx-0">
+          {/* Navigation Links — scroll horizontal si no caben (evita solaparse con redes / idioma) */}
+          <div className="flex-1 min-w-0 max-w-full overflow-x-auto no-scrollbar lg:border-l lg:border-slate-200/80 lg:pl-6 xl:pl-8">
+            <div className="flex flex-nowrap items-center justify-center lg:justify-start gap-x-3 md:gap-x-4 lg:gap-x-4 xl:gap-x-5 2xl:gap-x-6 px-4 lg:px-0 min-w-max mx-auto lg:mx-0">
               {navLinks.map((link) =>
                 link.href === '/' ? (
                   <Link
@@ -99,7 +99,7 @@ export const Navbar = () => {
             </div>
           </div>
 
-          <div className="hidden lg:flex items-center gap-4">
+          <div className="hidden lg:flex shrink-0 items-center gap-4">
             <div className="flex items-center gap-3 text-slate-400 border-r pr-4 border-slate-200">
               <a href="https://www.youtube.com/@BtekTecnologiaAplicadaaNegocio" target="_blank" rel="noopener noreferrer">
                 <Youtube size={16} className="hover:text-btek-red transition-colors cursor-pointer" />
