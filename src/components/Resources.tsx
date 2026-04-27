@@ -41,8 +41,7 @@ export const Resources = () => {
     >
       <div className="container mx-auto px-4">
         <div className="text-center mb-12 max-w-2xl mx-auto">
-          <h2 className="text-4xl font-bold text-btek-blue mb-4">{t('resourceVault.title')}</h2>
-          <p className="text-slate-600">{t('resourceVault.subtitle')}</p>
+          <h2 className="text-4xl font-bold text-btek-blue">{t('resourceVault.title')}</h2>
         </div>
 
         {!unlocked ? (
