@@ -17,6 +17,10 @@ interface DiagnosticQuizProps {
 
 type Level = 'reactivo' | 'transicion' | 'proactivo';
 
+type ReportMailStatus = 'idle' | 'sending' | 'sent' | 'error';
+
+const DIAGNOSTIC_CONTACT_EMAIL = 'perezramirezjacobo@gmail.com';
+
 export const DiagnosticQuiz = ({ isOpen, onClose }: DiagnosticQuizProps) => {
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState({
@@ -36,6 +40,7 @@ export const DiagnosticQuiz = ({ isOpen, onClose }: DiagnosticQuizProps) => {
   const [isSessionRequested, setIsSessionRequested] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [showEmailOptions, setShowEmailOptions] = useState(false);
+  const [reportMailStatus, setReportMailStatus] = useState<ReportMailStatus>('idle');
 
   // Auto-detect location
   useEffect(() => {
@@ -61,6 +66,10 @@ export const DiagnosticQuiz = ({ isOpen, onClose }: DiagnosticQuizProps) => {
 
     return () => ac.abort();
   }, [isOpen, formData.location]);
+
+  useEffect(() => {
+    if (!isOpen) setReportMailStatus('idle');
+  }, [isOpen]);
 
   const questions = [
     { text: "¿Cuentas con un NOC 24/7 que supervise tus tiendas en tiempo real?", category: "Detección y corrección proactiva" },
@@ -140,16 +149,62 @@ export const DiagnosticQuiz = ({ isOpen, onClose }: DiagnosticQuizProps) => {
     }
   };
 
+  const submitDiagnosticReport = async () => {
+    setReportMailStatus('sending');
+    const scoreVal = formData.answers.filter((a) => a === true).length;
+    const lvl = getLevel(scoreVal);
+    const qa = questions.map((q, i) => ({
+      question: q.text,
+      answer: formData.answers[i] === true,
+    }));
+
+    const base = (import.meta.env.VITE_DIAGNOSTIC_API_URL ?? '').replace(/\/$/, '');
+    const url = `${base}/api/send-diagnostic`;
+
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone || undefined,
+          location: formData.location || undefined,
+          score: scoreVal,
+          levelTitle: levelData[lvl].title,
+          situation: formData.situation,
+          desiredResult: formData.desiredResult,
+          obstacles: formData.obstacles,
+          solution: formData.solution,
+          additionalInfo: formData.additionalInfo || undefined,
+          qa,
+        }),
+      });
+      const data = (await res.json()) as {ok?: boolean};
+      if (!res.ok || !data.ok) {
+        setReportMailStatus('error');
+        return;
+      }
+      setReportMailStatus('sent');
+    } catch {
+      setReportMailStatus('error');
+    }
+  };
+
   const handleNext = () => {
-    if (step === 3) {
+    if (step === 2) {
+      if (!isStepValid()) return;
       confetti({
         particleCount: 150,
         spread: 70,
         origin: { y: 0.6 },
-        colors: ['#003399', '#cc0000', '#ffffff']
+        colors: ['#003399', '#cc0000', '#ffffff'],
       });
+      void submitDiagnosticReport();
+      setStep(3);
+      return;
     }
-    setStep(prev => prev + 1);
+    setStep((prev) => prev + 1);
   };
 
   const handleScheduleSession = () => {
@@ -186,7 +241,7 @@ Saludos.
     `);
 
     let url = '';
-    const to = 'ventas@btek.com.mx';
+    const to = DIAGNOSTIC_CONTACT_EMAIL;
 
     switch (provider) {
       case 'gmail':
@@ -611,7 +666,33 @@ Saludos.
                     <>
                       {!showEmailOptions ? (
                         <>
-                          <p className="text-sm text-slate-500 font-medium">Hemos enviado un reporte detallado a <span className="text-btek-blue font-bold">{formData.email}</span></p>
+                          {reportMailStatus === 'sending' && (
+                            <p className="text-sm text-slate-500 font-medium">
+                              Enviando tu informe a{' '}
+                              <span className="text-btek-blue font-bold">{formData.email}</span>…
+                            </p>
+                          )}
+                          {reportMailStatus === 'sent' && (
+                            <p className="text-sm text-slate-500 font-medium">
+                              Te enviamos el informe a{' '}
+                              <span className="text-btek-blue font-bold">{formData.email}</span>. Revisa también spam o
+                              promociones.
+                            </p>
+                          )}
+                          {reportMailStatus === 'error' && (
+                            <div className="space-y-3">
+                              <p className="text-sm font-bold text-btek-red">
+                                No pudimos enviar el correo automáticamente. Comprueba tu conexión o vuelve a intentarlo.
+                              </p>
+                              <button
+                                type="button"
+                                onClick={() => void submitDiagnosticReport()}
+                                className="text-xs font-black uppercase tracking-widest text-btek-blue hover:underline"
+                              >
+                                Reintentar envío
+                              </button>
+                            </div>
+                          )}
                           <div className="flex flex-col md:flex-row gap-4">
                             <button 
                               onClick={handleScheduleSession}
@@ -691,7 +772,7 @@ Saludos.
                       <div className="grid md:grid-cols-2 gap-4 text-left">
                         <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
                           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Contacto Directo</p>
-                          <p className="text-sm font-bold text-btek-blue">ventas@btek.com.mx</p>
+                          <p className="text-sm font-bold text-btek-blue">{DIAGNOSTIC_CONTACT_EMAIL}</p>
                         </div>
                         <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
                           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Sitio Web</p>
