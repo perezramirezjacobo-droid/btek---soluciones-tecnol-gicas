@@ -82,7 +82,7 @@ function buildHtml(data: DiagnosticPayload): string {
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /** Copia interna del informe si no defines `DIAGNOSTIC_BCC_EMAIL` en `.env`. */
-const DEFAULT_DIAGNOSTIC_BCC_EMAIL = 'perezramirezjacobo@gmail.com';
+const DEFAULT_DIAGNOSTIC_BCC_EMAIL = 'kdiaz@btek.com.mx';
 
 export function validatePayload(raw: unknown): DiagnosticPayload | { error: string } {
   if (!raw || typeof raw !== 'object') return { error: 'Cuerpo inválido' };

@@ -19,7 +19,7 @@ type Level = 'reactivo' | 'transicion' | 'proactivo';
 
 type ReportMailStatus = 'idle' | 'sending' | 'sent' | 'error';
 
-const DIAGNOSTIC_CONTACT_EMAIL = 'perezramirezjacobo@gmail.com';
+const DIAGNOSTIC_CONTACT_EMAIL = 'kdiaz@btek.com.mx';
 
 export const DiagnosticQuiz = ({ isOpen, onClose }: DiagnosticQuizProps) => {
   const [step, setStep] = useState(0);
