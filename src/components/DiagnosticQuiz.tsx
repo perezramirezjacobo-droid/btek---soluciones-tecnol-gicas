@@ -4,7 +4,7 @@ import {
   X, CheckCircle2, ChevronRight, ChevronLeft, 
   User, Mail, Phone, MapPin, AlertCircle, 
   TrendingUp, ShieldCheck, Activity, Brain,
-  Trophy, ArrowRight, Send
+  Trophy, Send
 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import confetti from 'canvas-confetti';
@@ -17,9 +17,69 @@ interface DiagnosticQuizProps {
 
 type Level = 'reactivo' | 'transicion' | 'proactivo';
 
-type ReportMailStatus = 'idle' | 'sending' | 'sent' | 'error';
-
 const DIAGNOSTIC_CONTACT_EMAIL = 'kdiaz@btek.com.mx';
+
+type QuestionItem = { text: string; category: string };
+
+function buildDiagnosticMailContent(
+  formData: {
+    name: string;
+    email: string;
+    phone: string;
+    location: string;
+    answers: (boolean | null)[];
+    situation: string;
+    desiredResult: string;
+    obstacles: string;
+    solution: string;
+    additionalInfo: string;
+  },
+  questions: QuestionItem[],
+  score: number,
+  level: { title: string; state: string; opportunity: string; priority: string },
+): { subject: string; body: string } {
+  const qaLines = questions
+    .map(
+      (q, i) =>
+        `${i + 1}. ${q.text}\n   Respuesta: ${formData.answers[i] === true ? 'Sí' : 'No'}`,
+    )
+    .join('\n\n');
+
+  const body = `Hola equipo de Btek,
+
+Comparto el resultado de mi diagnóstico Pak Retail.
+
+--- DATOS DE CONTACTO ---
+Nombre: ${formData.name}
+Correo: ${formData.email}
+Teléfono: ${formData.phone || 'No proporcionado'}
+Ubicación: ${formData.location || 'No indicada'}
+
+--- RESULTADO ---
+Puntuación: ${score}/10
+Nivel: ${level.title}
+Estado: ${level.state}
+Oportunidad: ${level.opportunity}
+Prioridad: ${level.priority}
+
+--- PERFIL ---
+Situación actual: ${formData.situation}
+Resultado deseado (90 días): ${formData.desiredResult}
+Obstáculos: ${formData.obstacles}
+Solución percibida: ${formData.solution}
+Comentarios: ${formData.additionalInfo || 'Ninguno'}
+
+--- CUESTIONARIO ---
+${qaLines}
+
+Saludos,
+${formData.name}`;
+
+  return {
+    subject: `Diagnóstico Pak Retail - ${formData.name} (${score}/10)`,
+    body,
+  };
+}
 
 export const DiagnosticQuiz = ({ isOpen, onClose }: DiagnosticQuizProps) => {
   const [step, setStep] = useState(0);
@@ -37,10 +97,7 @@ export const DiagnosticQuiz = ({ isOpen, onClose }: DiagnosticQuizProps) => {
   });
 
   const [locationLoading, setLocationLoading] = useState(false);
-  const [isSessionRequested, setIsSessionRequested] = useState(false);
   const [isSending, setIsSending] = useState(false);
-  const [showEmailOptions, setShowEmailOptions] = useState(false);
-  const [reportMailStatus, setReportMailStatus] = useState<ReportMailStatus>('idle');
 
   // Auto-detect location
   useEffect(() => {
@@ -68,7 +125,10 @@ export const DiagnosticQuiz = ({ isOpen, onClose }: DiagnosticQuizProps) => {
   }, [isOpen, formData.location]);
 
   useEffect(() => {
-    if (!isOpen) setReportMailStatus('idle');
+    if (!isOpen) {
+      setStep(0);
+      setIsSending(false);
+    }
   }, [isOpen]);
 
   const questions = [
@@ -149,48 +209,6 @@ export const DiagnosticQuiz = ({ isOpen, onClose }: DiagnosticQuizProps) => {
     }
   };
 
-  const submitDiagnosticReport = async () => {
-    setReportMailStatus('sending');
-    const scoreVal = formData.answers.filter((a) => a === true).length;
-    const lvl = getLevel(scoreVal);
-    const qa = questions.map((q, i) => ({
-      question: q.text,
-      answer: formData.answers[i] === true,
-    }));
-
-    const base = (import.meta.env.VITE_DIAGNOSTIC_API_URL ?? '').replace(/\/$/, '');
-    const url = `${base}/api/send-diagnostic`;
-
-    try {
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone || undefined,
-          location: formData.location || undefined,
-          score: scoreVal,
-          levelTitle: levelData[lvl].title,
-          situation: formData.situation,
-          desiredResult: formData.desiredResult,
-          obstacles: formData.obstacles,
-          solution: formData.solution,
-          additionalInfo: formData.additionalInfo || undefined,
-          qa,
-        }),
-      });
-      const data = (await res.json()) as {ok?: boolean};
-      if (!res.ok || !data.ok) {
-        setReportMailStatus('error');
-        return;
-      }
-      setReportMailStatus('sent');
-    } catch {
-      setReportMailStatus('error');
-    }
-  };
-
   const handleNext = () => {
     if (step === 2) {
       if (!isStepValid()) return;
@@ -200,61 +218,45 @@ export const DiagnosticQuiz = ({ isOpen, onClose }: DiagnosticQuizProps) => {
         origin: { y: 0.6 },
         colors: ['#003399', '#cc0000', '#ffffff'],
       });
-      void submitDiagnosticReport();
       setStep(3);
       return;
     }
     setStep((prev) => prev + 1);
   };
 
-  const handleScheduleSession = () => {
-    setShowEmailOptions(true);
-  };
-
   const sendEmail = (provider: 'gmail' | 'outlook' | 'yahoo' | 'default') => {
     setIsSending(true);
-    
-    const subject = encodeURIComponent(`Nueva solicitud de sesión: ${formData.name} - Pak Retail`);
-    const body = encodeURIComponent(`
-Hola equipo de Btek,
 
-Deseo agendar una sesión de 15 minutos para discutir los resultados de mi diagnóstico.
+    const scoreVal = calculateScore();
+    const { subject, body } = buildDiagnosticMailContent(
+      formData,
+      questions,
+      scoreVal,
+      levelData[getLevel(scoreVal)],
+    );
 
-DATOS DEL LEAD:
-- Nombre: ${formData.name}
-- Email: ${formData.email}
-- Teléfono: ${formData.phone || 'No proporcionado'}
-- Ubicación: ${formData.location}
+    let bodyForUrl = body;
+    if (provider === 'default' && encodeURIComponent(body).length > 1800) {
+      bodyForUrl = `${body.slice(0, 1100)}\n\n[Informe abreviado por límite del cliente de correo. Usa Gmail u Outlook para el informe completo.]`;
+    }
 
-RESULTADOS DEL DIAGNÓSTICO:
-- Score: ${calculateScore()}/10
-- Nivel: ${levelData[getLevel(calculateScore())].title}
-
-PERFILAMIENTO:
-- Situación Actual: ${formData.situation}
-- Resultado Deseado: ${formData.desiredResult}
-- Obstáculos: ${formData.obstacles}
-- Solución Percibida: ${formData.solution}
-- Comentarios: ${formData.additionalInfo || 'Ninguno'}
-
-Saludos.
-    `);
-
-    let url = '';
+    const subjectEnc = encodeURIComponent(subject);
+    const bodyEnc = encodeURIComponent(bodyForUrl);
     const to = DIAGNOSTIC_CONTACT_EMAIL;
 
+    let url = '';
     switch (provider) {
       case 'gmail':
-        url = `https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${subject}&body=${body}`;
+        url = `https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${subjectEnc}&body=${bodyEnc}`;
         break;
       case 'outlook':
-        url = `https://outlook.office.com/mail/deeplink/compose?to=${to}&subject=${subject}&body=${body}`;
+        url = `https://outlook.office.com/mail/deeplink/compose?to=${to}&subject=${subjectEnc}&body=${bodyEnc}`;
         break;
       case 'yahoo':
-        url = `https://compose.mail.yahoo.com/?to=${to}&subject=${subject}&body=${body}`;
+        url = `https://compose.mail.yahoo.com/?to=${to}&subject=${subjectEnc}&body=${bodyEnc}`;
         break;
       default:
-        url = `mailto:${to}?subject=${subject}&body=${body}`;
+        url = `mailto:${to}?subject=${subjectEnc}&body=${bodyEnc}`;
     }
 
     if (provider === 'default') {
@@ -263,17 +265,7 @@ Saludos.
       window.open(url, '_blank', 'noopener,noreferrer');
     }
 
-    setTimeout(() => {
-      setIsSending(false);
-      setIsSessionRequested(true);
-      setShowEmailOptions(false);
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ['#003399', '#cc0000']
-      });
-    }, 500);
+    setTimeout(() => setIsSending(false), 400);
   };
 
   const handleBack = () => setStep(prev => prev - 1);
@@ -661,133 +653,76 @@ Saludos.
                   </div>
                 </div>
 
-                <div className="pt-8 border-t border-slate-100 space-y-6">
-                  {!isSessionRequested ? (
-                    <>
-                      {!showEmailOptions ? (
-                        <>
-                          {reportMailStatus === 'sending' && (
-                            <p className="text-sm text-slate-500 font-medium">
-                              Enviando tu informe a{' '}
-                              <span className="text-btek-blue font-bold">{formData.email}</span>…
-                            </p>
-                          )}
-                          {reportMailStatus === 'sent' && (
-                            <p className="text-sm text-slate-500 font-medium">
-                              Te enviamos el informe a{' '}
-                              <span className="text-btek-blue font-bold">{formData.email}</span>. Revisa también spam o
-                              promociones.
-                            </p>
-                          )}
-                          {reportMailStatus === 'error' && (
-                            <div className="space-y-3">
-                              <p className="text-sm font-bold text-btek-red">
-                                No pudimos enviar el correo automáticamente. Comprueba tu conexión o vuelve a intentarlo.
-                              </p>
-                              <button
-                                type="button"
-                                onClick={() => void submitDiagnosticReport()}
-                                className="text-xs font-black uppercase tracking-widest text-btek-blue hover:underline"
-                              >
-                                Reintentar envío
-                              </button>
-                            </div>
-                          )}
-                          <div className="flex flex-col md:flex-row gap-4">
-                            <button 
-                              onClick={handleScheduleSession}
-                              disabled={isSending}
-                              className="flex-1 py-4 bg-btek-blue text-white rounded-2xl font-black uppercase tracking-widest hover:bg-blue-800 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-                            >
-                              {isSending ? "Enviando..." : "Agendar Sesión 15 min"} <ArrowRight size={18} />
-                            </button>
-                            <button 
-                              onClick={onClose}
-                              className="flex-1 py-4 bg-slate-100 text-slate-600 rounded-2xl font-black uppercase tracking-widest hover:bg-slate-200 transition-all"
-                            >
-                              Cerrar
-                            </button>
-                          </div>
-                        </>
-                      ) : (
-                        <motion.div 
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          className="space-y-4"
-                        >
-                          <p className="text-xs font-black uppercase tracking-widest text-slate-400">Selecciona tu plataforma de correo</p>
-                          <div className="grid grid-cols-2 gap-3">
-                            <button 
-                              onClick={() => sendEmail('gmail')}
-                              className="p-4 bg-white border border-slate-100 rounded-2xl hover:border-btek-blue hover:shadow-md transition-all flex flex-col items-center gap-2"
-                            >
-                              <img src="https://www.gstatic.com/images/branding/product/2x/gmail_2020q4_48dp.png" alt="Gmail" className="w-8 h-8" />
-                              <span className="text-[10px] font-black uppercase tracking-widest">Gmail</span>
-                            </button>
-                            <button 
-                              onClick={() => sendEmail('outlook')}
-                              className="p-4 bg-white border border-slate-100 rounded-2xl hover:border-btek-blue hover:shadow-md transition-all flex flex-col items-center gap-2"
-                            >
-                              <img src="https://res.cdn.office.net/assets/mail/pwa/v1/pngs/apple-touch-icon.png" alt="Outlook" className="w-8 h-8" />
-                              <span className="text-[10px] font-black uppercase tracking-widest">Outlook</span>
-                            </button>
-                            <button 
-                              onClick={() => sendEmail('yahoo')}
-                              className="p-4 bg-white border border-slate-100 rounded-2xl hover:border-btek-blue hover:shadow-md transition-all flex flex-col items-center gap-2"
-                            >
-                              <img src="https://s.yimg.com/cv/apiv2/myy/yahoo_mail_app_icon_192.png" alt="Yahoo" className="w-8 h-8" />
-                              <span className="text-[10px] font-black uppercase tracking-widest">Yahoo</span>
-                            </button>
-                            <button 
-                              onClick={() => sendEmail('default')}
-                              className="p-4 bg-white border border-slate-100 rounded-2xl hover:border-btek-blue hover:shadow-md transition-all flex flex-col items-center gap-2"
-                            >
-                              <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center">
-                                <Mail size={20} className="text-slate-500" />
-                              </div>
-                              <span className="text-[10px] font-black uppercase tracking-widest">Predeterminado</span>
-                            </button>
-                          </div>
-                          <button 
-                            onClick={() => setShowEmailOptions(false)}
-                            className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-btek-red transition-colors"
-                          >
-                            Cancelar
-                          </button>
-                        </motion.div>
-                      )}
-                    </>
-                  ) : (
-                    <motion.div 
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="space-y-6"
-                    >
-                      <div className="p-6 bg-green-50 border border-green-100 rounded-3xl text-center">
-                        <CheckCircle2 className="text-green-500 mx-auto mb-2" size={32} />
-                        <h4 className="text-lg font-black text-green-800 uppercase tracking-tight">¡Solicitud Enviada!</h4>
-                        <p className="text-sm text-green-700 font-medium">Hemos recibido tu interés para agendar una sesión. Un experto de Btek se pondrá en contacto contigo a la brevedad.</p>
-                      </div>
-                      
-                      <div className="grid md:grid-cols-2 gap-4 text-left">
-                        <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Contacto Directo</p>
-                          <p className="text-sm font-bold text-btek-blue">{DIAGNOSTIC_CONTACT_EMAIL}</p>
-                        </div>
-                        <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Sitio Web</p>
-                          <p className="text-sm font-bold text-btek-blue">www.btek.com.mx</p>
-                        </div>
-                      </div>
-                      
-                      <button 
-                        onClick={onClose}
-                        className="w-full py-4 bg-btek-blue text-white rounded-2xl font-black uppercase tracking-widest hover:bg-blue-800 transition-all"
+                <div className="pt-8 border-t border-slate-100 space-y-4">
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="space-y-4"
+                  >
+                    <p className="text-sm text-slate-600 font-medium text-left md:text-center">
+                      Elige tu plataforma de correo. Se abrirá un borrador para{' '}
+                      <span className="text-btek-blue font-bold">{DIAGNOSTIC_CONTACT_EMAIL}</span> con tus
+                      resultados. Revisa el mensaje y pulsa <strong>Enviar</strong> en tu cuenta.
+                    </p>
+                    <p className="text-xs font-black uppercase tracking-widest text-slate-400">
+                      Enviar diagnóstico por correo
+                    </p>
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        type="button"
+                        disabled={isSending}
+                        onClick={() => sendEmail('gmail')}
+                        className="p-4 bg-white border border-slate-100 rounded-2xl hover:border-btek-blue hover:shadow-md transition-all flex flex-col items-center gap-2 disabled:opacity-50"
                       >
-                        Finalizar
+                        <img
+                          src="https://www.gstatic.com/images/branding/product/2x/gmail_2020q4_48dp.png"
+                          alt="Gmail"
+                          className="w-8 h-8 object-contain"
+                        />
+                        <span className="text-[10px] font-black uppercase tracking-widest">Gmail</span>
                       </button>
-                    </motion.div>
-                  )}
+                      <button
+                        type="button"
+                        disabled={isSending}
+                        onClick={() => sendEmail('outlook')}
+                        className="p-4 bg-white border border-slate-100 rounded-2xl hover:border-btek-blue hover:shadow-md transition-all flex flex-col items-center gap-2 disabled:opacity-50"
+                      >
+                        <img
+                          src="https://res.cdn.office.net/assets/mail/pwa/v1/pngs/apple-touch-icon.png"
+                          alt="Outlook"
+                          className="w-8 h-8 object-contain"
+                        />
+                        <span className="text-[10px] font-black uppercase tracking-widest">Outlook</span>
+                      </button>
+                      <button
+                        type="button"
+                        disabled={isSending}
+                        onClick={() => sendEmail('yahoo')}
+                        className="p-4 bg-white border border-slate-100 rounded-2xl hover:border-btek-blue hover:shadow-md transition-all flex flex-col items-center gap-2 disabled:opacity-50"
+                      >
+                        <img src="/Yahoo.png" alt="Yahoo" className="h-8 w-auto max-w-[4.5rem] object-contain" />
+                        <span className="text-[10px] font-black uppercase tracking-widest">Yahoo</span>
+                      </button>
+                      <button
+                        type="button"
+                        disabled={isSending}
+                        onClick={() => sendEmail('default')}
+                        className="p-4 bg-white border border-slate-100 rounded-2xl hover:border-btek-blue hover:shadow-md transition-all flex flex-col items-center gap-2 disabled:opacity-50"
+                      >
+                        <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center">
+                          <Mail size={20} className="text-slate-500" />
+                        </div>
+                        <span className="text-[10px] font-black uppercase tracking-widest">Predeterminado</span>
+                      </button>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={onClose}
+                      className="w-full py-4 bg-slate-100 text-slate-600 rounded-2xl font-black uppercase tracking-widest hover:bg-slate-200 transition-all"
+                    >
+                      Cerrar
+                    </button>
+                  </motion.div>
                 </div>
               </motion.div>
             )}
